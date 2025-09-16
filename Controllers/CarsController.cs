@@ -1,4 +1,5 @@
 using CarInsurance.Api.Dtos;
+using CarInsurance.Api.Models;
 using CarInsurance.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,5 +30,37 @@ public class CarsController(CarService service) : ControllerBase
         {
             return NotFound();
         }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+    [HttpPost("cars/{carId:long}/claims")]
+    public async Task<ActionResult<ClaimDto>> RegisterClaim(long carId, [FromBody] ClaimDto request)
+    {
+        try
+        {
+            var newClaim = await _service.RegisterClaimAsync(carId, request);
+            return CreatedAtAction(nameof(RegisterClaim), new { carId, claimId = newClaim.Id }, newClaim);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+    }
+
+    [HttpGet("cars/{carId:long}/history")]
+    public async Task<ActionResult<CarHistoryResponse>> GetCarHistory(long carId)
+    {
+        try
+        {
+            var history = await _service.GetCarHistoryAsync(carId);
+            return Ok(history);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
     }
 }
+

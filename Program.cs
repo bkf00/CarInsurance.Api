@@ -1,3 +1,4 @@
+using CarInsurance.Api.BackgroundServices;
 using CarInsurance.Api.Data;
 using CarInsurance.Api.Services;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,8 @@ builder.Services.AddScoped<CarService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddHostedService<PolicyExpirationLogger>();
 
 var app = builder.Build();
 
